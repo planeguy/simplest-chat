@@ -1,4 +1,5 @@
-//const term = require( 'terminal-kit' ).terminal;
+
+/* ===== Get command line options ===== */
 const {Command} = require('commander');
 const program = new Command();
 program.version('0.0.1');
@@ -12,6 +13,7 @@ program
 program.parse(process.argv);
 const options = program.opts();
 
+/* ===== Connect to local server ===== */
 const io = require('socket.io-client');
 const socket = io.connect('http://localhost:10101',{
     reconnect:true,
@@ -20,47 +22,72 @@ const socket = io.connect('http://localhost:10101',{
         node:options.node
     }
 });
-const readline = require('readline').createInterface({
-    input:process.stdin,
-    output:process.stdout
-});
+
+/* ===== colour reset ==== */
 const colourReset = "\x1b[0m";
-let myColour;
 
-function writeOut(message){
-    readline.output.clearLine(); //clear this line
-    readline.output.cursorTo(0); //back to the start of the line
-    readline.output.write(`${message}\n`);
-    readline.prompt(true);
-}
+/* ===== set up UI ===== */
+const blessed = require('blessed');
+let screen, chatBox, inputBox, promptBox;
 
+screen  = blessed.screen({
+    fastCSR:true
+});
+chatBox = blessed.box({
+    top:0,
+    left:0,
+    width:'100%',
+    height:screen.height-3,
+    scrollable:true,
+    border:'line',
+    label:'Connecting...'
+});
+screen.append(chatBox);
+inputBox = blessed.textbox({
+    top:screen.height-3,
+    left:3,
+    width:screen.width-1,
+    height:1,
+    scrollable:false,
+    keyable:true,
+    inputOnFocus:true,
+    keys:['enter']
+});
+screen.append(inputBox);
+inputBox.focus();
+promptBox=blessed.box({
+    top:screen.height-3,
+    left:0,
+    width:3,
+    height:1,
+    scrollable:false,
+    keyable:false,
+    clickable:false
+});
+screen.append(promptBox);
+screen.render();
+
+/* ===== UI Events ===== */
+screen.key('escape', ()=>process.exit(0));
+inputBox.key('escape', ()=>process.exit(0));
+inputBox.on('submit', ()=>{
+    //send message to server
+    socket.emit('message',{message:inputBox.value});
+    inputBox.clearValue();
+    inputBox.readInput();
+    screen.render();
+});
+
+/* ===== network events ===== */
 socket.on('message',(message)=>{
-    if(!!message.serverconnect){
-        myColour = message.serverconnect.colour;
-    }else{
-        let u = (!!message.user)?`${message.colour}${message.user}${colourReset}: `:''
-        writeOut(`${u}${message.message}`);
-    }
-});
-socket.on('connect', (socket)=>{
-    writeOut(`Connected`);
+    let u = (!!message.user)?`${message.colour}${message.user}${colourReset}: `:''
+    chatBox.pushLine(`${u}${message.message}`);
+    chatBox.setScrollPerc(100) 
+    screen.render();
 });
 
-readline.on('line',(line)=>{
-    if(line[0]=='/'){
-        writeOut(`==>${line}`);
-        switch(line){
-            case '\/q': 
-                process.exit;
-                break;
-        }
-    }else{
-        socket.emit('message',{user: options.user, node: options.node, message:line});
-    }
+socket.on('serverconnect', srv=>{
+    chatBox.setLabel(srv.title || 'BBS Chat');
+    promptBox.setContent(`${srv.colour}=>${colourReset}`);
+    screen.render();
 });
-
-// term.inputField({
-//     x:2, y:options.rows-1
-// },(err, line)=>{
-//     if(!err) socket.emit('message',{user: options.user, node: options.node, message:line});
-// });
