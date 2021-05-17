@@ -20,7 +20,7 @@ exports.moduleInfo = {
     packageName : 'ca.delek.simplestchat'
 };
 
-class simplestChatModule extends MenuModule {
+class EnigmaSimplestChatModule extends MenuModule {
     constructor(opts){
         super(opts);
         this.log    = Log.child( { module : 'simplest-chat' } );
