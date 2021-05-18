@@ -3,16 +3,11 @@ const wrap = require('word-wrap');
 const resetColour = "\x1b[0m";
 
 //enigma1/2
-const Log               = require('./logger.js').log;
-const { MenuModule }    = require('./menu_module.js');
+const Log               = require('../core/logger.js').log;
+const { MenuModule }    = require('../core/menu_module.js');
 const {
-    pipeToAnsi,
-    stripMciColorCodes
-}                       = require('./color_codes.js');
-const stringFormat      = require('./string_format.js');
-const StringUtil        = require('./string_util.js');
-const Config            = require('./config.js').get;
-
+    pipeToAnsi
+}                       = require('../core/color_codes.js');
 exports.moduleInfo = {
     name        : 'Simplest Chat Client',
     desc        : 'Connects to a local simplest chat server',
