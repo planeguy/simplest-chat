@@ -1,13 +1,14 @@
 const {SimplestChatClient} = require('./SimplestChatClient.js');
 const wrap = require('word-wrap');
 const resetColour = "\x1b[0m";
+const enigmaCore = '../../core';
 
 //enigma1/2
-const Log               = require('../core/logger.js').log;
-const { MenuModule }    = require('../core/menu_module.js');
+const Log               = require(`${enigmaCore}/logger.js`).log;
+const { MenuModule }    = require(`${enigmaCore}/menu_module.js`);
 const {
     pipeToAnsi
-}                       = require('../core/color_codes.js');
+}                       = require(`${enigmaCore}/color_codes.js`);
 exports.moduleInfo = {
     name        : 'Simplest Chat Client',
     desc        : 'Connects to a local simplest chat server',
