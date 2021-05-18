@@ -86,4 +86,4 @@ class EnigmaSimplestChatModule extends MenuModule {
     }
 }
 
-module.getModule = EnigmaSimplestChatModule;
+exports.getModule = EnigmaSimplestChatModule;
