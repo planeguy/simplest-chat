@@ -39,25 +39,26 @@ class EnigmaSimplestChatModule extends MenuModule {
     }
 
     mciReady(mciData, err){
-        super.mciReady(mciData,err=>!!err?err:null);
+        super.mciReady(mciData,err=>{
+            if(err) return cb(err);
 
-        
-        async.series(
-            [
-                (callback) => {
-                    return this.prepViewController('simplestChat', FormIds.simplestChat, mciData.menu, callback);
-                },
-                (callback) => {
-                    return this.validateMCIByViewIds('simplestChat', [ MciViewIds.simplestChat.chatLog, MciViewIds.simplestChat.inputArea ], callback);
-                },
-                (callback) => {
-                    return(callback);
+            async.series(
+                [
+                    (callback) => {
+                        return this.prepViewController('simplestChat', FormIds.simplestChat, mciData.menu, callback);
+                    },
+                    (callback) => {
+                        return this.validateMCIByViewIds('simplestChat', [ MciViewIds.simplestChat.chatLog, MciViewIds.simplestChat.inputArea ], callback);
+                    },
+                    (callback) => {
+                        return(callback);
+                    }
+                ],
+                err => {
+                    return cb(err);
                 }
-            ],
-            err => {
-                return cb(err);
-            }
-        );
+            );
+        });
     }
 
     setupNetworkEvents(socket){
