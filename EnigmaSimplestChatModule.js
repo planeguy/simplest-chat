@@ -62,9 +62,6 @@ class EnigmaSimplestChatModule extends MenuModule {
                     },
                     (callback) => {
                         return this.validateMCIByViewIds('simplestChat', [ MciViewIds.simplestChat.chatLog, MciViewIds.simplestChat.inputArea ], callback);
-                    },
-                    (callback) => {
-                        return(callback);
                     }
                 ],
                 err => {
@@ -79,7 +76,7 @@ class EnigmaSimplestChatModule extends MenuModule {
             let u = (!!message.user)?`${message.colour}${message.user}${resetColour}: `:''
             let m = (`${u}${message.message}`);
             
-            const chatLogView = this.viewControllers.mrcChat.getView(MciViewIds.mrcChat.chatLog);
+            const chatLogView = this.viewControllers.simplestChat.getView(MciViewIds.simplestChat.chatLog);
             const chatWidth = chatLogView.dimens.width;
             const chatHeight = chatLogView.dimens.height;
 
@@ -91,7 +88,7 @@ class EnigmaSimplestChatModule extends MenuModule {
         });
     }
     sendMessage(){
-        const inputAreaView = this.viewControllers.mrcChat.getView(MciViewIds.mrcChat.inputArea);
+        const inputAreaView = this.viewControllers.simplestChat.getView(MciViewIds.simplestChat.inputArea);
         const inputData		= inputAreaView.getData();
 
         this.chatClient.sendMessage(inputData);
