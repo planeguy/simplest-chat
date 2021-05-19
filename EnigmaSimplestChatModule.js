@@ -34,12 +34,6 @@ class EnigmaSimplestChatModule extends MenuModule {
         super(opts);
         this.log    = Log.child( { module : 'simplest-chat' } );
 
-        this.chatClient = new SimplestChatClient({
-            user:this.client.user.username,
-            node:this.client.node
-        });
-        this.setupNetworkEvents(this.chatClient.socket);
-
         this.menuMethods={
             sendMessage: (formData, extraArgs, cb)=>{
                 this.sendMessage();
@@ -51,8 +45,8 @@ class EnigmaSimplestChatModule extends MenuModule {
         }
     }
 
-    mciReady(mciData, err){
-        super.mciReady(mciData,err=>{
+    mciReady(mciData, cb){
+        super.mciReady(mciData, (err)=>{
             if(err) return cb(err);
 
             async.series(
@@ -62,6 +56,15 @@ class EnigmaSimplestChatModule extends MenuModule {
                     },
                     (callback) => {
                         return this.validateMCIByViewIds('simplestChat', [ MciViewIds.simplestChat.chatLog, MciViewIds.simplestChat.inputArea ], callback);
+                    },
+                    (callback)=>{
+                        this.chatClient = new SimplestChatClient({
+                            user:this.client.user.username,
+                            node:this.client.node
+                        });
+                        this.setupNetworkEvents(this.chatClient.socket);
+                
+                        return callback;
                     }
                 ],
                 err => {
