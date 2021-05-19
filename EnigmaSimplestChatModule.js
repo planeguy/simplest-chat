@@ -20,7 +20,6 @@ class EnigmaSimplestChatModule extends MenuModule {
     constructor(opts){
         super(opts);
         this.log    = Log.child( { module : 'simplest-chat' } );
-        this.config = Object.assign({}, _.get(opts, 'menuConfig.config'), { extraArgs : opts.extraArgs });
 
         this.chatClient = new SimplestChatClient({
             user:this.client.user.username,
