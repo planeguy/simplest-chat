@@ -17,5 +17,8 @@
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",
     "word-wrap": "^1.2.3"
+  },
+  "peerDependencies": {
+    "lodash": "4.17.21"
   }
 }
