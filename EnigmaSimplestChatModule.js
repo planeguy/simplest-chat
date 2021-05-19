@@ -16,6 +16,19 @@ exports.moduleInfo = {
     packageName : 'ca.delek.simplestchat'
 };
 
+const FormIds = {
+    simplestChat    : 0,
+};
+
+const MciViewIds = {
+    simplestChat  : {
+        chatLog             : 1,
+        inputArea           : 2,
+
+        customRangeStart    : 20,   //  20+ = customs
+    }
+};
+
 class EnigmaSimplestChatModule extends MenuModule {
     constructor(opts){
         super(opts);
