@@ -16,7 +16,7 @@ const { SimplestChatClient } = require('./SimplestChatClient.js');
 //process.exit(0);
 
 const blessed = require('blessed');
-
+const resetColour = "\x1b[0m";
 
 //yes, we could extend, but as an example for
 // how the enigma mod works, we will use composition
@@ -81,7 +81,7 @@ class StandaloneClient{
 
     setupNetworkEvents(){
         this.chatClient.socket.on('message',(message)=>{
-            let u = (!!message.user)?`${message.colour}${message.user}${colourReset}: `:''
+            let u = (!!message.user)?`${message.colour}${message.user}${resetColour}: `:''
             this.chatBox.pushLine(`${u}${message.message}`);
             this.chatBox.setScrollPerc(100) 
             this.screen.render();
@@ -89,7 +89,7 @@ class StandaloneClient{
     
         this.chatClient.socket.on('serverconnect', srv=>{
             this.chatBox.setLabel(srv.title || 'BBS Chat');
-            this.promptBox.setContent(`${srv.colour}=>${colourReset}`);
+            this.promptBox.setContent(`${srv.colour}=>${resetColour}`);
             this.screen.render();
         });
     }
