@@ -17,7 +17,7 @@ exports.moduleInfo = {
 };
 
 const FormIds = {
-    simplestChat    : 0,
+    simplestChat    : 0
 };
 
 const MciViewIds = {
@@ -25,7 +25,7 @@ const MciViewIds = {
         chatLog             : 1,
         inputArea           : 2,
 
-        customRangeStart    : 20,   //  20+ = customs
+        customRangeStart    : 20   //  20+ = customs
     }
 };
 
@@ -58,12 +58,14 @@ class EnigmaSimplestChatModule extends MenuModule {
                         return this.validateMCIByViewIds('simplestChat', [ MciViewIds.simplestChat.chatLog, MciViewIds.simplestChat.inputArea ], callback);
                     },
                     (callback)=>{
+                        this.chatLogView = this.viewControllers.simplestChat.getView(MciViewIds.simplestChat.chatLog);
+                        this.chatWidth = chatLogView.dimens.width;
+                        this.chatHeight = chatLogView.dimens.height;
                         this.chatClient = new SimplestChatClient({
                             user:this.client.user.username,
                             node:this.client.node
                         });
                         this.setupNetworkEvents(this.chatClient.socket);
-                
                         return callback;
                     }
                 ],
@@ -76,18 +78,15 @@ class EnigmaSimplestChatModule extends MenuModule {
 
     setupNetworkEvents(socket){
         socket.on('message',(message)=>{
-            let u = (!!message.user)?`${message.colour}${message.user}${resetColour}: `:''
+            //if a user with colour format it so
+            let u = (!!message.user)?`${message.colour}${message.user}${resetColour}: `:'';
             let m = (`${u}${message.message}`);
-            
-            const chatLogView = this.viewControllers.simplestChat.getView(MciViewIds.simplestChat.chatLog);
-            const chatWidth = chatLogView.dimens.width;
-            const chatHeight = chatLogView.dimens.height;
-
-            chatLogView.addText(pipeToAnsi(wrap(m, {width:chatWidth})));
-
-            if(chatLogView.getLineCount() > chatHeight) {
-                chatLogView.deleteLine(0);
-            }
+            this.addToChatlog(m);
+            this.chatClient.getMessage(message);
+        });
+        socket.on('serverconnect',(srvc)=>{
+            this.addToChatlog(`Connected to ${srvc.title}`);
+            this.chatClient.getServerConnect(srvc);
         });
     }
     sendMessage(){
@@ -96,6 +95,14 @@ class EnigmaSimplestChatModule extends MenuModule {
 
         this.chatClient.sendMessage(inputData);
         inputAreaView.clearText();
+    }
+    addToChatlog(text){
+        this.chatLogView.addText(pipeToAnsi(wrap(text, {width:this.chatWidth})));
+
+        while(this.chatLogView.getLineCount() > this.chatHeight) {
+            this.chatLogView.deleteLine(0);
+        }
+
     }
 }
 
