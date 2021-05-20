@@ -3,7 +3,7 @@ const io = require('socket.io-client');
 module.exports.SimplestChatClient = class SimplestChatClient {
     constructor(opts){
         this.socket = io.connect('http://localhost:10101',{
-            reconnect:true,
+            reconnect:opts.reconnect||false,
             query:{
                 user:opts.user,
                 node:opts.node
